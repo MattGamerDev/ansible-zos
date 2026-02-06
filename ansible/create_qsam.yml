@@ -17,7 +17,7 @@
   tasks:
     - name: Set facts used in this playbook
       set_fact:
-        data_set_name: IBMUSER.QSAM1
+        data_set_name: GAMA03.QSAM1
 
     - name: Delete data set if it exists
       zos_data_set:
@@ -35,9 +35,9 @@
       zos_data_set:
         name: "{{ data_set_name }}"      # CREATE: DD DSN=(...)
         type: seq                        # CREATE: DD DCB=(DSORG=PS)
-        format: fb                       # CREATE: DD DCB=(RECFM=FB)
-        record_length: 80                # CREATE: DD DCB=(LRECL=80)
-        block_size: 8000                 # CREATE: DD DCB=(BLKSIZE=32000)
+        format: vb                       # CREATE: DD DCB=(RECFM=FB)
+        record_length: 100                # CREATE: DD DCB=(LRECL=80)
+        block_size: 4160                 # CREATE: DD DCB=(BLKSIZE=32000)
         state: present                   # CREATE: DD DISP=(MOD,...)
         replace: true                    # CREATE: DD DISP(...,CATLG,...)
         space_type: trk                  # CREATE: DD SPACE=(TRK,...)

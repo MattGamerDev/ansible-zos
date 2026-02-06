@@ -1,0 +1,36 @@
+---
+- name: Ensure DD was found
+  fail:
+    msg: "DD was not found in job output"
+  when: dataset_to_display is not defined
+
+- name: Retrieve SYSOUT content for DD {{ dataset_to_display.ddname }}
+  zos_job_output:
+    job_id: "{{ job_output.jobs[0].job_id }}"
+    owner: "{{ job_output.jobs[0].owner }}"
+    ddname: "{{ dataset_to_display.ddname }}"
+  register: dd_output
+
+- name: Print DD content
+  debug:
+    msg: "{{ item }}"
+  loop: >-
+    {{
+      dd_output.jobs[0].ddnames
+      | selectattr('ddname', 'equalto', dataset_to_display.ddname)
+      | map(attribute='content')
+      | first
+    }}
+
+- name: Write SYSUT2 output to a local file
+  copy:
+    content: >-
+      {{
+        dd_output.jobs[0].ddnames
+        | selectattr('ddname', 'equalto', dataset_to_display.ddname)
+        | map(attribute='content')
+        | first
+        | join('\n')
+      }}
+    dest: "./sysut2_output.txt"
+  delegate_to: localhost

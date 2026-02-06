@@ -1,0 +1,23 @@
+//*********************************************************************
+//* THIS JOB CONDITIONALLY DELETES AND RE-CREATES A QSAM DATASET
+//* WITH VARIABLE-LENGTH RECORDS
+//*********************************************************************
+//GAMA03   JOB ,'GAMA03',CLASS=A,
+//         MSGCLASS=X,
+//         MSGLEVEL=(1,1),
+//         NOTIFY=&SYSUID
+//DELETE   EXEC PGM=IDCAMS
+//SYSPRINT DD SYSOUT=*
+//SYSIN    DD *
+  DELETE GAMA03.QSAM1
+  SET MAXCC = 0
+/*
+//CREATE   EXEC PGM=IEFBR14
+//SYSPRINT DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*
+//SYSDUMP  DD SYSOUT=*
+//DD1      DD DSN=GAMA03.QSAM1,
+//            DISP=(NEW,CATLG,DELETE),
+//            SPACE=(TRK,(1,1),RLSE),
+//            UNIT=SYSDA,
+//            DCB=(DSORG=PS,RECFM=VB,LRECL=100,BLKSIZE=4160)

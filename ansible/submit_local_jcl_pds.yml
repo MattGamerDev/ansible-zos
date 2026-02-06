@@ -4,19 +4,19 @@
   gather_facts: no
   collections:
     - ibm.ibm_zos_core
-  environment: {{ environment_vars }}
+  environment: "{{ environment_vars }}"
 
   tasks:
     - name: Copy local file to a JCL library
       zos_copy:
-        src: ./jcl/CRQSAM
-        dest: IBMUSER.JCL(CRQSAM)
+        src: ../jcl/CONCATGDG
+        dest: GAMA03.JCL(CONGDG)
         remote_src: false 
         force: true
 
     - include_tasks: tasks/submit_jcl.yml 
       vars:
-        src: IBMUSER.JCL(CRQSAM)
+        src: GAMA03.JCL(CONGDG)
         acceptable_cond_code: 4 
 
     - name: Display all results 

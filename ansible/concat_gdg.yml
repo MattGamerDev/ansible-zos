@@ -1,0 +1,56 @@
+---
+- name: Create GDG and concatenate generations
+  hosts: zos
+  gather_facts: false
+  collections:
+    - ibm.ibm_zos_core
+  environment: "{{ environment_vars }}"
+
+  vars:
+    gdg_jcl_src: ../jcl/CATGDG       # Your working GDG creation JCL
+    concat_jcl_src: ../jcl/CONCATGDG
+    concat_dataset: GAMA03.CONCAT.DATA
+    local_concat_file: ./data/concat_data.txt
+
+  tasks:
+
+    # - name: Copy GDG creation JCL to z/OS
+    #   zos_copy:
+    #     src: "{{ gdg_jcl_src }}"
+    #     dest: GAMA03.JCL(CATGDG)
+    #     remote_src: false
+    #     force: true
+
+    # - name: Submit GDG creation JCL
+    #   include_tasks: tasks/submit_jcl.yml
+    #   vars:
+    #     src: GAMA03.JCL(CATGDG)
+    #     acceptable_cond_code: 4
+
+    - name: Copy concatenation JCL to z/OS
+      zos_copy:
+        src: "{{ concat_jcl_src }}"
+        dest: GAMA03.JCL(CONGDG)
+        remote_src: false
+        force: true
+
+    - name: Submit concatenation JCL
+      include_tasks: tasks/submit_jcl.yml
+      vars:
+        src: GAMA03.JCL(CONGDG)
+        acceptable_cond_code: 4
+      register: concat_job
+
+    - name: Display concatenation job output
+      debug:
+        var: concat_job
+
+    - name: Fetch concatenated dataset to local node
+      zos_fetch:
+        src: "{{ concat_dataset }}"
+        dest: "{{ local_concat_file }}"
+        flat: true
+
+    - name: Display concatenated dataset contents
+      debug:
+        msg: "{{ lookup('file', local_concat_file) }}"

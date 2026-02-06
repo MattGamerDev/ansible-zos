@@ -1,0 +1,30 @@
+---
+- name: Conditionally create a model DSCB for GDG
+  hosts: zos
+  gather_facts: false
+  collections:
+    - ibm.ibm_zos_core
+  environment: "{{ environment_vars }}"
+
+  vars:
+    model_dataset: GAMA03.MODEL.GDGM
+
+  tasks:
+
+    - name: Ensure model DSCB exists
+      zos_data_set:
+        name: "{{ model_dataset }}"
+        type: seq                    # DSORG=PS (sequential)
+        record_format: vb            # RECFM=VB
+        record_length: 100           # LRECL=100
+        block_size: 4160             # BLKSIZE=4160
+        space_type: trk              # SPACE type
+        space_primary: 0             # minimal (TRK,(0,0))
+        space_secondary: 0
+        state: present               # Create if missing
+        replace: false               # Idempotent
+      register: model_result
+
+    - name: Debug model creation result
+      debug:
+        var: model_result

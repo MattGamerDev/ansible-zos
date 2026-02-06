@@ -6,10 +6,11 @@
 //CATGDG    EXEC PGM=IDCAMS
 //SYSPRINT  DD SYSOUT=*
 //SYSIN     DD *
- DELETE IBMUSER.TEST.GDG GDG
+ DELETE GAMA03.TEST.GDG GDG
+ SET MAXCC = 0
  IF LASTCC < 9 THEN -
    DEFINE GDG ( -
-                NAME(IBMUSER.TEST.GDG) -
+                NAME(GAMA03.TEST.GDG) -
                 LIMIT(50) -
                 NOEMPTY -
                 SCRATCH -

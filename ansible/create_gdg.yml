@@ -1,0 +1,37 @@
+---
+- name: Conditionally delete and define a GDG
+  hosts: zos
+  gather_facts: false
+  collections:
+    - ibm.ibm_zos_core
+  environment: "{{ environment_vars }}"
+
+  tasks:
+    - name: Conditionally delete and define a GDG base
+      zos_mvs_raw:
+        program_name: idcams
+        auth: true
+        dds:
+          - dd_output:
+              dd_name: sysprint
+              return_content:
+                type: text
+
+          - dd_input:
+              dd_name: sysin
+              content: |-
+                " DELETE GAMA03.TEST.GDG GDG
+                " IF LASTCC < 9 THEN -
+                "   DEFINE GDG ( -
+                "     NAME(GAMA03.TEST.GDG) -
+                "     LIMIT(50) -
+                "     NOEMPTY -
+                "     SCRATCH -
+                   )
+
+      register: idcams_result
+
+    - name: Show full IDCAMS result
+      debug:
+        var: idcams_result
+

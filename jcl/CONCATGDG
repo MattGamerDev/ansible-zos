@@ -1,0 +1,15 @@
+//GAMA03CG JOB ,'CONCAT GDG',CLASS=A,MSGCLASS=X,
+//         MSGLEVEL=(1,1),NOTIFY=&SYSUID
+//*-------------------------------------------------------------------
+//* Concatenate two GDG generations into a single sequential dataset
+//*-------------------------------------------------------------------
+//CONCAT   EXEC PGM=IEBGENER
+//SYSIN    DD DUMMY
+//SYSPRINT DD SYSOUT=*
+//SYSUT1   DD DSN=GAMA03.TEST.GDG(-1),DISP=SHR
+//         DD DSN=GAMA03.TEST.GDG(0),DISP=SHR
+//SYSUT2   DD DSN=GAMA03.CONCAT.DATA,
+//            DISP=(NEW,CATLG,DELETE),
+//            UNIT=SYSDA,
+//            SPACE=(TRK,(1,1),RLSE),
+//            DCB=(DSORG=PS,RECFM=VB,LRECL=100,BLKSIZE=4160)
